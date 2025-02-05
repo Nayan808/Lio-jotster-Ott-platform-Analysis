@@ -28,4 +28,15 @@ Q1.
       order by quater;
 
 Q2.
-    
+  => liocinema
+      select language,content_type, count(distinct(content_id)) as total
+      from liocinema_db.contents
+      group by language,content_type;
+
+  => JotStar
+      select language,content_type, count(distinct(content_id)) as total
+      from jotstar_db.contents
+      group by language,content_type;
+
+Q3.
+  
