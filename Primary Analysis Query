@@ -70,4 +70,16 @@ Q4.
       order by age_group,subscription_plan;
 
 Q5.
-  
+  with l as(SELECT city_tier x,device_type y,round(avg(total_watch_time_mins) ,2) as a FROM 
+        liocinema_db.content_consumption
+        join liocinema_db.subscribers using(user_id)
+        group by device_type,city_tier),
+  j as(SELECT city_tier x,device_type y,round(avg(total_watch_time_mins) ,2) as a2 FROM 
+        jotstar_db.content_consumption
+        join jotstar_db.subscribers using(user_id)
+        group by device_type,city_tier)
+  select l.x as city_tier,l.y as device_type,l.a as liocinema_watch_time,j.a2 as jotstar_watch_time
+  from j join l using(x,y)
+  order by x;
+
+Q6.
