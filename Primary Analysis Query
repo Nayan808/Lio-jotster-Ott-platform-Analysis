@@ -52,22 +52,21 @@ Q3.
 Q4.
   => liocinema 
       select age_group,subscription_plan,
-         case when last_active_date is null then "Active"
-         else "InActive"
-         end as user_status,
-      count(distinct(user_id)) as total
-      from liocinema_db.subscribers
-      group by age_group,subscription_plan,user_status
+           (count( case when last_active_date is null then 1 End) *100/count(*) ) as 'InActive %',
+           (count( case when last_active_date is not null then 1 End) *100/count(*) ) as 'Active %',
+           count(distinct(user_id)) as total
+      from jotstar_db.subscribers
+      group by age_group,subscription_plan
       order by age_group,subscription_plan;
   => jotster
       select age_group,subscription_plan,
-         case when last_active_date is null then "Active"
-         else "InActive"
-         end as user_status,
-      count(distinct(user_id)) as total
+           (count( case when last_active_date is null then 1 End) *100/count(*) ) as 'InActive %',
+           (count( case when last_active_date is not null then 1 End) *100/count(*) ) as 'Active %',
+           count(distinct(user_id)) as total
       from jotstar_db.subscribers
-      group by age_group,subscription_plan,user_status
+      group by age_group,subscription_plan
       order by age_group,subscription_plan;
+
 
 Q5.
   with l as(SELECT city_tier x,device_type y,round(avg(total_watch_time_mins) ,2) as a FROM 
