@@ -1,0 +1,31 @@
+Q1. 
+  => Lio Cinema
+      SELECT  
+       case
+            when month(subscription_date) between 1 and 3 then 'Q1'
+            when month(subscription_date) between 4 and 6 then 'Q2'
+            when month(subscription_date) between 7 and 9 then 'Q3'
+            when month(subscription_date) between 10 and 12 then 'Q4'
+       end as quater,
+       count(distinct(user_id)) as total_user
+      FROM content_consumption
+      join subscribers using(user_id)
+      group by quater
+      order by quater;
+
+  => Jotster
+      SELECT  
+       case
+            when month(subscription_date) between 1 and 3 then 'Q1'
+            when month(subscription_date) between 4 and 6 then 'Q2'
+            when month(subscription_date) between 7 and 9 then 'Q3'
+            when month(subscription_date) between 10 and 12 then 'Q4'
+       end as quater,
+       count(distinct(user_id)) as total_user
+      FROM content_consumption
+      join subscribers using(user_id)
+      group by quater
+      order by quater;
+
+Q2.
+    
