@@ -39,4 +39,14 @@ Q2.
       group by language,content_type;
 
 Q3.
-  
+  => liocinema
+      select city_tier,age_group,subscription_plan, count(distinct(user_id)) as total_users
+      from liocinema_db.subscribers
+      group by city_tier,age_group,subscription_plan;
+
+  => jotstar
+      select city_tier,age_group,subscription_plan, count(distinct(user_id)) as total_users
+      from jotstar_db.subscribers
+      group by city_tier,age_group,subscription_plan;
+
+Q4.
