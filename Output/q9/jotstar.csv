@@ -1,0 +1,10 @@
+city_tier,subscription_plans,pct_contribution,total
+"Tier 1",Premium,"39.99 %",10178
+"Tier 1",VIP,"39.93 %",10162
+"Tier 1",Free,"20.08 %",5111
+"Tier 2",VIP,"50.61 %",6794
+"Tier 2",Free,"30.27 %",4064
+"Tier 2",Premium,"19.12 %",2566
+"Tier 3",Free,"50.84 %",2921
+"Tier 3",VIP,"38.31 %",2201
+"Tier 3",Premium,"10.84 %",623
