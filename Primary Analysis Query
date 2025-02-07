@@ -82,3 +82,26 @@ Q5.
   order by x;
 
 Q6.
+  => liocinema
+     select month((last_active_date)) as inactive_date,
+     count(user_id) as inactive_users,
+     avg(total_watch_time_mins) as avg_watch_time ,
+     round(avg(total_watch_time_mins)/count(user_id)*100,2) as pct_change
+     from liocinema_db.subscribers
+     join liocinema_db.content_consumption using (user_id)
+     where last_active_date is not null
+     group by inactive_date 
+     order by inactive_date
+
+   => jotstar
+     select month((last_active_date)) as inactive_date,
+     count(user_id) as inactive_users,
+     avg(total_watch_time_mins) as avg_watch_time ,
+     round(avg(total_watch_time_mins)/count(user_id)*100,2) as pct_change
+     from jotstar_db.subscribers
+     join jotstar_db.content_consumption using (user_id)
+     where last_active_date is not null
+     group by inactive_date 
+     order by inactive_date
+
+Q7.
