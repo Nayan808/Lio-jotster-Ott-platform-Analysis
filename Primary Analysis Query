@@ -1,4 +1,4 @@
-Q1. 
+#Q1. 
   => Lio Cinema
       SELECT  
        case
@@ -81,7 +81,7 @@ Q5.
   from j join l using(x,y)
   order by x;
 
-Q6.
+#Q6.
   => liocinema
      select month((last_active_date)) as inactive_date,
      count(user_id) as inactive_users,
@@ -105,3 +105,54 @@ Q6.
      order by inactive_date
 
 Q7.
+=> liocinema 
+
+with cte as(SELECT user_id,subscription_plan,new_subscription_plan,
+case 
+when month(subscription_date) between 1 and 3 or month(plan_change_date) between 1 and 3 then 'Q1'
+when month(subscription_date) between 4 and 6 or month(plan_change_date) between 4 and 6 then 'Q2'
+when month(subscription_date) between 7 and 9 or month(plan_change_date) between 7 and 9 then 'Q3'
+when month(subscription_date) between 10 and 12 or month(plan_change_date) between 10 and 12 then 'Q4'
+end as subscription_quater
+,
+case 
+when new_subscription_plan="Free" and subscription_plan='Premium' or 'Basic' then 'Yes'
+when new_subscription_plan="Basic" and subscription_plan='Premium' then 'Yes'
+else 'No'
+end as downgrade
+ FROM liocinema_db.subscribers)
+select subscription_quater,
+case when new_subscription_plan='Free' and subscription_plan='Basic' then 'Basic_to_free'
+     when new_subscription_plan='Free' and subscription_plan='Premium' then 'Premium_to_free'
+     when new_subscription_plan='Basic' and subscription_plan='Free' then 'Basic_to_Free'
+     else 'Free'
+end as upgrade_type, count(user_id) as total
+from cte 
+group by upgrade_type,subscription_quater
+order by subscription_quater,total desc;
+
+=> Jotstar
+
+with cte as(SELECT user_id,subscription_plan,new_subscription_plan,
+case 
+when month(subscription_date) between 1 and 3 or month(plan_change_date) between 1 and 3 then 'Q1'
+when month(subscription_date) between 4 and 6 or month(plan_change_date) between 4 and 6 then 'Q2'
+when month(subscription_date) between 7 and 9 or month(plan_change_date) between 7 and 9 then 'Q3'
+when month(subscription_date) between 10 and 12 or month(plan_change_date) between 10 and 12 then 'Q4'
+end as subscription_quater
+,
+case 
+when new_subscription_plan="Free" and subscription_plan='Premium' or 'VIP' then 'Yes'
+when new_subscription_plan="Premium" and subscription_plan='VIP' then 'Yes'
+else 'No'
+end as downgrade
+ FROM jotstar_db.subscribers)
+select subscription_quater,
+case when new_subscription_plan='Free' and subscription_plan='VIP' then 'VIP_to_free'
+     when new_subscription_plan='Free' and subscription_plan='Premium' then 'Premium_to_free'
+     when new_subscription_plan='Premium' and subscription_plan='VIP' then 'VIP_to_Free'
+     else 'Free'
+end as upgrade_type, count(user_id) as total
+from cte 
+group by upgrade_type,subscription_quater
+order by subscription_quater,total desc;
