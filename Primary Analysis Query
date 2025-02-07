@@ -1,4 +1,4 @@
-#Q1. 
+Q1. 
   => Lio Cinema
       SELECT  
        case
@@ -105,54 +105,181 @@ Q5.
      order by inactive_date
 
 Q7.
-=> liocinema 
-
-with cte as(SELECT user_id,subscription_plan,new_subscription_plan,
-case 
-when month(subscription_date) between 1 and 3 or month(plan_change_date) between 1 and 3 then 'Q1'
-when month(subscription_date) between 4 and 6 or month(plan_change_date) between 4 and 6 then 'Q2'
-when month(subscription_date) between 7 and 9 or month(plan_change_date) between 7 and 9 then 'Q3'
-when month(subscription_date) between 10 and 12 or month(plan_change_date) between 10 and 12 then 'Q4'
-end as subscription_quater
-,
-case 
-when new_subscription_plan="Free" and subscription_plan='Premium' or 'Basic' then 'Yes'
-when new_subscription_plan="Basic" and subscription_plan='Premium' then 'Yes'
-else 'No'
-end as downgrade
- FROM liocinema_db.subscribers)
-select subscription_quater,
-case when new_subscription_plan='Free' and subscription_plan='Basic' then 'Basic_to_free'
+   => liocinema 
+    with cte as(SELECT user_id,subscription_plan,new_subscription_plan,
+    case 
+    when month(subscription_date) between 1 and 3 or month(plan_change_date) between 1 and 3 then 'Q1'
+    when month(subscription_date) between 4 and 6 or month(plan_change_date) between 4 and 6 then 'Q2'
+    when month(subscription_date) between 7 and 9 or month(plan_change_date) between 7 and 9 then 'Q3'
+    when month(subscription_date) between 10 and 12 or month(plan_change_date) between 10 and 12 then 'Q4'
+    end as subscription_quater,
+    case 
+    when new_subscription_plan="Free" and subscription_plan='Premium' or 'Basic' then 'Yes'
+    when new_subscription_plan="Basic" and subscription_plan='Premium' then 'Yes'
+    else 'No'
+    end as downgrade
+    FROM liocinema_db.subscribers)
+    select subscription_quater,
+    case when new_subscription_plan='Free' and subscription_plan='Basic' then 'Basic_to_free'
      when new_subscription_plan='Free' and subscription_plan='Premium' then 'Premium_to_free'
      when new_subscription_plan='Basic' and subscription_plan='Free' then 'Basic_to_Free'
      else 'Free'
-end as upgrade_type, count(user_id) as total
-from cte 
-group by upgrade_type,subscription_quater
-order by subscription_quater,total desc;
+    end as upgrade_type, count(user_id) as total
+    from cte 
+    group by upgrade_type,subscription_quater
+    order by subscription_quater,total desc;
 
 => Jotstar
-
-with cte as(SELECT user_id,subscription_plan,new_subscription_plan,
-case 
-when month(subscription_date) between 1 and 3 or month(plan_change_date) between 1 and 3 then 'Q1'
-when month(subscription_date) between 4 and 6 or month(plan_change_date) between 4 and 6 then 'Q2'
-when month(subscription_date) between 7 and 9 or month(plan_change_date) between 7 and 9 then 'Q3'
-when month(subscription_date) between 10 and 12 or month(plan_change_date) between 10 and 12 then 'Q4'
-end as subscription_quater
-,
-case 
-when new_subscription_plan="Free" and subscription_plan='Premium' or 'VIP' then 'Yes'
-when new_subscription_plan="Premium" and subscription_plan='VIP' then 'Yes'
-else 'No'
-end as downgrade
- FROM jotstar_db.subscribers)
-select subscription_quater,
-case when new_subscription_plan='Free' and subscription_plan='VIP' then 'VIP_to_free'
+     with cte as(SELECT user_id,subscription_plan,new_subscription_plan,
+     case 
+     when month(subscription_date) between 1 and 3 or month(plan_change_date) between 1 and 3 then 'Q1'
+     when month(subscription_date) between 4 and 6 or month(plan_change_date) between 4 and 6 then 'Q2'
+     when month(subscription_date) between 7 and 9 or month(plan_change_date) between 7 and 9 then 'Q3'
+     when month(subscription_date) between 10 and 12 or month(plan_change_date) between 10 and 12 then 'Q4'
+     end as subscription_quater,
+     case 
+     when new_subscription_plan="Free" and subscription_plan='Premium' or 'VIP' then 'Yes'
+     when new_subscription_plan="Premium" and subscription_plan='VIP' then 'Yes'
+     else 'No'
+     end as downgrade
+     FROM jotstar_db.subscribers)
+     select subscription_quater,
+     case when new_subscription_plan='Free' and subscription_plan='VIP' then 'VIP_to_free'
      when new_subscription_plan='Free' and subscription_plan='Premium' then 'Premium_to_free'
      when new_subscription_plan='Premium' and subscription_plan='VIP' then 'VIP_to_Free'
      else 'Free'
-end as upgrade_type, count(user_id) as total
-from cte 
-group by upgrade_type,subscription_quater
-order by subscription_quater,total desc;
+     end as upgrade_type, count(user_id) as total
+     from cte 
+     group by upgrade_type,subscription_quater
+     order by subscription_quater,total desc;
+
+Q8.
+  => liocinema   
+       with cte as(SELECT user_id,subscription_plan,new_subscription_plan,
+      case when subscription_plan="Free" then 'No'
+       when new_subscription_plan="Free" then 'No'
+       when new_subscription_plan="Basic" and subscription_plan="Premium" then 'No'
+       else 'Yes' 
+       end as upgrade
+       FROM liocinema_db.subscribers)
+       select 
+     case when subscription_plan='Free' and new_subscription_plan='Basic' then 'Free_to_Basic'
+     when subscription_plan='Free' and new_subscription_plan='Premium' then 'Free_to_Premium'
+     when subscription_plan='Basic' and new_subscription_plan='Premium' then 'Basic_to_Premium'
+     when subscription_plan="Basic" and new_subscription_plan is null  then "Free_to_Basic"
+     when subscription_plan="Premium" and new_subscription_plan is null  then "Free_to_Premium"
+     else 'Free'
+      end as upgrade_type, count(user_id) as total
+      from cte  
+      group by upgrade_type
+      order by total desc;
+
+=> Jotstar
+      with cte as(SELECT user_id,subscription_plan,new_subscription_plan,
+      case when subscription_plan="Free" then 'No'
+      when new_subscription_plan="Free" then 'No'
+      when new_subscription_plan="Premium" and subscription_plan="VIP" then 'No'
+      else 'Yes' 
+      end as upgrade
+      FROM jotstar_db.subscribers)
+      select 
+     case when subscription_plan='Free' and new_subscription_plan='VIP' then 'Free_to_VIP'
+     when subscription_plan='Free' and new_subscription_plan='Premium' then 'Free_to_Premium'
+     when subscription_plan='Premium' and new_subscription_plan='VIP' then 'Premium_to_VIP'
+     when subscription_plan="VIP" and new_subscription_plan is null  then "Free_to_VIP"
+     when subscription_plan="Premium" and new_subscription_plan is null  then "Free_to_Premium"
+     else 'Free'
+      end as upgrade_type ,count(user_id) as total
+      from cte  
+      group by upgrade_type
+      order by total desc;
+
+Q9.
+   => Jotstar
+      select city_tier,
+      case when new_subscription_plan is null then subscription_plan
+      else subscription_plan
+      end as subscription_plans,
+      concat(round(count(user_id)/sum(count(user_id)) over(partition by city_tier)*100,2)," %") as 'pct_contribution',
+      count(user_id) as total
+      from jotstar_db.subscribers
+      group by city_tier,subscription_plans
+      order by city_tier ,total desc;
+
+   => Liocinema
+       select city_tier,
+       case when new_subscription_plan is null then subscription_plan
+       else subscription_plan
+       end as subscription_plans,
+       concat(round(count(user_id)/sum(count(user_id)) over(partition by city_tier)*100,2)," %") as 'pct_contribution',
+       count(user_id) as total
+       from liocinema_db.subscribers
+       group by city_tier,subscription_plans
+       order by city_tier ,total desc;
+
+Q10.
+=> liocinema
+    SELECT * FROM liocinema_db.subscribers;
+    with cte as(select user_id,subscription_plan,new_subscription_plan,month(last_active_date) ld,month(subscription_date) sd,
+    month(plan_change_date) cd
+    from liocinema_db.subscribers), cte2 as(
+    select user_id a,subscription_plan b,new_subscription_plan,
+   case 
+   when subscription_plan = 'Free' and new_subscription_plan='Basic' and ld is null then max(month(cd)-cd)*69
+   when subscription_plan = 'Free' and new_subscription_plan='Basic' and ld is not null then (ld-cd)*69
+   when subscription_plan = 'Free' and new_subscription_plan='Premium' and ld is null then max(month(cd)-cd)*129
+   when subscription_plan = 'Free' and new_subscription_plan='Premium' and ld is not null then (ld-cd)*129
+   when subscription_plan = 'Basic' and new_subscription_plan='Premium' and ld is null then ((cd-sd)*69)+max(month(cd)-cd)*129
+   when subscription_plan = 'Basic' and new_subscription_plan='Premium' and ld is not null then ((cd-sd)*69)+(ld-cd)*129
+   when subscription_plan = 'Basic' and new_subscription_plan is null and ld is null then max(month(cd)-sd)*69
+   when subscription_plan = 'Basic' and new_subscription_plan is null and ld is not null then (ld-sd)*69
+   when subscription_plan = 'Basic' and new_subscription_plan='Free' and ld is null then (cd-sd)*69
+   when subscription_plan = 'Basic' and new_subscription_plan='Free' and ld is not null then (ld-sd)*69
+   when subscription_plan = 'Premium' and new_subscription_plan is null and ld is null then max(month(cd)-sd)*129
+   when subscription_plan = 'Premium' and new_subscription_plan is null and ld is not null then (ld-sd)*129
+   when subscription_plan = 'Premium' and new_subscription_plan='Basic' and ld is null then ((cd-sd)*129)+max(month(cd)-cd)*69
+   when subscription_plan = 'Premium' and new_subscription_plan='Basic' and ld is not null then ((cd-sd)*129)+(ld-cd)*69
+   when subscription_plan = 'Premium' and new_subscription_plan='Free' and ld is null then (cd-sd)*129
+   when subscription_plan = 'Premium' and new_subscription_plan='Free' and ld is not null then (ld-sd)*129
+   else 0
+    end as total_amt
+    from cte c
+    group by user_id
+    order by total_amt desc)
+   select b as subscription_type,sum(total_amt) as total_revenue, count(a) as total_users from cte2 c
+   group by b
+   ;
+
+=> Jotstar
+   SELECT * FROM liocinema_db.subscribers;
+   with cte as(select user_id,subscription_plan,new_subscription_plan,month(last_active_date) ld,month(subscription_date) sd,
+   month(plan_change_date) cd
+   from jotstar_db.subscribers), cte2 as(
+   select user_id a,subscription_plan b,new_subscription_plan,
+  case 
+   when subscription_plan = 'Free' and new_subscription_plan='Premium' and ld is null then max(month(cd)-cd)*69
+   when subscription_plan = 'Free' and new_subscription_plan='Premium' and ld is not null then (ld-cd)*69
+   when subscription_plan = 'Free' and new_subscription_plan='VIP' and ld is null then max(month(cd)-cd)*129
+   when subscription_plan = 'Free' and new_subscription_plan='VIP' and ld is not null then (ld-cd)*129
+   when subscription_plan = 'Premium' and new_subscription_plan='VIP' and ld is null then ((cd-sd)*69)+max(month(cd)-cd)*129
+   when subscription_plan = 'Premium' and new_subscription_plan='VIP' and ld is not null then ((cd-sd)*69)+(ld-cd)*129
+   when subscription_plan = 'Premium' and new_subscription_plan is null and ld is null then max(month(cd)-sd)*69
+   when subscription_plan = 'Premium' and new_subscription_plan is null and ld is not null then (ld-sd)*69
+   when subscription_plan = 'Premium' and new_subscription_plan='Free' and ld is null then (cd-sd)*69
+   when subscription_plan = 'Premium' and new_subscription_plan='Free' and ld is not null then (ld-sd)*69
+   when subscription_plan = 'VIP' and new_subscription_plan is null and ld is null then max(month(cd)-sd)*129
+   when subscription_plan = 'VIP' and new_subscription_plan is null and ld is not null then (ld-sd)*129
+   when subscription_plan = 'VIP' and new_subscription_plan='Premium' and ld is null then ((cd-sd)*129)+max(month(cd)-cd)*69
+   when subscription_plan = 'VIP' and new_subscription_plan='Premium' and ld is not null then ((cd-sd)*129)+(ld-cd)*69
+   when subscription_plan = 'VIP' and new_subscription_plan='Free' and ld is null then (cd-sd)*129
+   when subscription_plan = 'VIP' and new_subscription_plan='Free' and ld is not null then (ld-sd)*129
+   else 0
+     end as total_amt
+      from cte c
+     group by user_id
+     order by total_amt desc
+     )
+     select b as subscription_type,sum(total_amt) as total_revenue, count(a) as total_users from cte2 c
+     group by b
+     ;
+
